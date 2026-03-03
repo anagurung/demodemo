@@ -1,180 +1,587 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Haus of Bakes</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #fff8f0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Haus of Bakes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    :root {
+      --cream: #fdf6ee;
+      --warm-white: #fffdf9;
+      --brown: #5c3d2e;
+      --dark-brown: #3a2318;
+      --gold: #c9933a;
+      --gold-light: #e8b96a;
+      --blush: #f2d5c0;
+      --text: #2e1f14;
+      --muted: #8a6e5e;
+      --border: #e4cdb8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Lato', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
 
-        header {
-            background-color: #d2691e;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 1000;
+      background: rgba(253,246,238,0.97); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 5%; display: flex; align-items: center; justify-content: space-between;
+      height: 72px; box-shadow: 0 2px 20px rgba(92,61,46,0.08);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo img {
+      height: 50px; width: 50px; object-fit: contain;
+      border-radius: 50%; border: 2px solid var(--gold);
+    }
+    .logo-fallback {
+      display: none; font-size: 2rem; line-height: 1;
+      width: 50px; height: 50px; border-radius: 50%;
+      border: 2px solid var(--gold); align-items: center; justify-content: center;
+    }
+    .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark-brown); letter-spacing: 0.04em; }
+    .nav-logo-text span { color: var(--gold); font-style: italic; }
+    .nav-links { display: flex; align-items: center; gap: 2rem; list-style: none; }
+    .nav-links a { font-family: 'Lato', sans-serif; font-weight: 700; font-size: 0.88rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--brown); text-decoration: none; position: relative; transition: color .25s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: var(--gold); transition: width .3s; }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { width: 100%; }
+    .cart-btn { background: var(--brown) !important; color: var(--cream) !important; padding: 8px 18px; border-radius: 30px; transition: background .25s, transform .2s !important; white-space: nowrap; }
+    .cart-btn:hover { background: var(--gold) !important; transform: scale(1.04) !important; }
+    .cart-btn::after { display: none !important; }
+    #cart-count { display: inline-flex; align-items: center; justify-content: center; background: var(--gold); color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.72rem; margin-left: 6px; }
 
-        nav {
-            background-color: #8b4513;
-            padding: 10px;
-            text-align: center;
-        }
+    /* HERO */
+    #home {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #fdf6ee 0%, #f5e8d5 50%, #ede0cd 100%);
+      display: flex; align-items: center; justify-content: center;
+      padding: 100px 5% 60px; position: relative; overflow: hidden;
+    }
+    #home::before { content: ''; position: absolute; top: -120px; right: -120px; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(201,147,58,0.12) 0%, transparent 70%); }
+    #home::after { content: ''; position: absolute; bottom: -80px; left: -80px; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(242,213,192,0.5) 0%, transparent 70%); }
+    .hero-inner { max-width: 1100px; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 1; }
+    .hero-text h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem,5vw,4.2rem); line-height: 1.15; color: var(--dark-brown); margin-bottom: 20px; }
+    .hero-text h1 em { color: var(--gold); font-style: italic; display: block; }
+    .hero-text p { font-size: 1.1rem; color: var(--muted); line-height: 1.8; margin-bottom: 32px; max-width: 440px; }
+    .hero-cta { display: inline-flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary { background: var(--brown); color: var(--cream); padding: 14px 32px; border-radius: 40px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background .3s, transform .2s; border: none; cursor: pointer; display: inline-block; }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+    .btn-outline { background: transparent; color: var(--brown); border: 2px solid var(--brown); padding: 13px 30px; border-radius: 40px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: all .3s; cursor: pointer; display: inline-block; }
+    .btn-outline:hover { background: var(--brown); color: var(--cream); }
+    .hero-image-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .hero-img-wrap { border-radius: 20px; overflow: hidden; box-shadow: 0 12px 40px rgba(92,61,46,0.18); aspect-ratio: 3/4; position: relative; }
+    .hero-img-wrap:first-child { margin-top: 40px; }
+    .hero-img-wrap:last-child { margin-top: -40px; }
+    .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+    .hero-img-wrap:hover img { transform: scale(1.06); }
 
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 15px;
-            font-weight: bold;
-        }
+    /* SECTION TITLE */
+    .section-title { text-align: center; margin-bottom: 56px; }
+    .eyebrow { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; display: block; }
+    .section-title h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,4vw,3rem); color: var(--dark-brown); line-height: 1.2; }
+    .section-title p { color: var(--muted); max-width: 520px; margin: 14px auto 0; font-size: 1.02rem; line-height: 1.7; }
 
-        nav a:hover {
-            color: #ffd700;
-        }
+    section { padding: 96px 5%; }
 
-        .hero {
-            background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff');
-            background-size: cover;
-            background-position: center;
-            height: 350px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 35px;
-            font-weight: bold;
-        }
+    /* PRODUCTS */
+    #products { background: var(--warm-white); }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 32px; max-width: 1200px; margin: 0 auto; }
+    .product-card { background: white; border-radius: 24px; overflow: hidden; box-shadow: 0 4px 24px rgba(92,61,46,0.10); transition: transform .3s, box-shadow .3s; display: flex; flex-direction: column; }
+    .product-card:hover { transform: translateY(-8px); box-shadow: 0 16px 48px rgba(92,61,46,0.18); }
+    .product-img { width: 100%; height: 220px; object-fit: cover; display: block; }
+    .product-info { padding: 20px 22px 24px; flex: 1; display: flex; flex-direction: column; }
+    .product-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+    .product-name { font-family: 'Playfair Display', serif; font-size: 1.25rem; color: var(--dark-brown); margin-bottom: 6px; }
+    .product-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin-bottom: 16px; flex: 1; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .product-price { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--brown); font-weight: 700; }
+    .product-unit { font-size: .7rem; font-weight: 400; color: var(--muted); }
+    .qty-row { display: flex; align-items: center; gap: 8px; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border); background: white; color: var(--brown); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; font-weight: 700; }
+    .qty-btn:hover { border-color: var(--gold); background: var(--gold); color: white; }
+    .qty-display { min-width: 28px; text-align: center; font-weight: 700; font-size: 1rem; color: var(--brown); }
+    .add-cart-btn { width: 100%; margin-top: 14px; background: var(--brown); color: var(--cream); border: none; border-radius: 12px; padding: 12px; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+    .add-cart-btn:hover { background: var(--gold); }
 
-        .section {
-            padding: 40px;
-            text-align: center;
-        }
+    /* ABOUT */
+    #about { background: var(--cream); }
+    .about-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,3.5vw,2.8rem); color: var(--dark-brown); line-height: 1.25; margin-bottom: 24px; }
+    .about-text p { color: var(--muted); line-height: 1.85; font-size: 1rem; margin-bottom: 18px; }
+    .about-features { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 32px; }
+    .feature-item { display: flex; gap: 12px; align-items: flex-start; }
+    .feature-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--blush); color: var(--brown); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .feature-item h4 { font-size: 0.92rem; font-weight: 700; color: var(--dark-brown); margin-bottom: 3px; }
+    .feature-item p { font-size: 0.82rem; color: var(--muted); margin: 0; }
 
-        .products {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+    /* CART PANEL */
+    #cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 2000; }
+    #cart-panel { position: fixed; right: 0; top: 0; bottom: 0; width: 380px; background: var(--warm-white); z-index: 2001; display: flex; flex-direction: column; transform: translateX(100%); transition: transform .35s cubic-bezier(.4,0,.2,1); box-shadow: -8px 0 40px rgba(92,61,46,0.15); }
+    #cart-panel.open { transform: translateX(0); }
+    #cart-overlay.open { display: block; }
+    .cart-header { padding: 28px 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+    .cart-header h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--dark-brown); }
+    .close-cart { background: none; border: none; font-size: 1.5rem; color: var(--muted); cursor: pointer; padding: 4px; border-radius: 6px; transition: color .2s; }
+    .close-cart:hover { color: var(--brown); }
+    #cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+    .cart-item { display: flex; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .cart-item img { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; }
+    .cart-item-details { flex: 1; }
+    .cart-item-name { font-weight: 700; font-size: 0.95rem; color: var(--dark-brown); margin-bottom: 2px; }
+    .cart-item-price { font-size: 0.88rem; color: var(--gold); font-weight: 700; }
+    .cart-item-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.1rem; transition: color .2s; }
+    .cart-item-remove:hover { color: #c0392b; }
+    .cart-empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .cart-empty i { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .cart-footer { padding: 20px 24px 28px; border-top: 1px solid var(--border); }
+    .cart-total { display: flex; justify-content: space-between; font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark-brown); margin-bottom: 16px; }
+    .checkout-btn { width: 100%; background: var(--brown); color: var(--cream); border: none; border-radius: 14px; padding: 16px; font-weight: 700; font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+    .checkout-btn:hover { background: var(--gold); }
 
-        .card {
-            background: white;
-            width: 250px;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
+    /* MAP / LOCATION */
+    #location { background: var(--warm-white); }
+    .map-container { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2fr; gap: 48px; align-items: start; }
+    .location-details h3 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--dark-brown); margin-bottom: 24px; }
+    .location-item { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
+    .location-icon { width: 44px; height: 44px; border-radius: 12px; background: var(--blush); color: var(--brown); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+    .location-item strong { display: block; font-size: 0.88rem; font-weight: 700; color: var(--dark-brown); margin-bottom: 2px; }
+    .location-item span { font-size: 0.9rem; color: var(--muted); line-height: 1.5; }
+    .map-embed { border-radius: 24px; overflow: hidden; box-shadow: 0 8px 40px rgba(92,61,46,0.14); height: 400px; }
+    .map-embed iframe { width: 100%; height: 100%; border: none; display: block; }
 
-        .card img {
-            width: 100%;
-            border-radius: 10px;
-        }
+    /* CONTACT */
+    #contact { background: var(--cream); }
+    .contact-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .contact-text h2 { font-family: 'Playfair Display', serif; font-size: clamp(2rem,3.5vw,2.8rem); color: var(--dark-brown); margin-bottom: 20px; }
+    .contact-text p { color: var(--muted); line-height: 1.8; margin-bottom: 32px; }
+    .social-links { display: flex; gap: 16px; flex-wrap: wrap; }
+    .social-link { display: flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 14px; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: transform .2s, box-shadow .2s; }
+    .social-link:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+    .social-link.facebook { background: #1877f2; color: white; }
+    .social-link.whatsapp { background: #25d366; color: white; }
+    .social-link i { font-size: 1.3rem; }
+    .contact-form { background: white; border-radius: 24px; padding: 36px; box-shadow: 0 8px 40px rgba(92,61,46,0.10); }
+    .contact-form h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--dark-brown); margin-bottom: 24px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brown); margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 12px; font-family: 'Lato', sans-serif; font-size: 0.95rem; color: var(--text); background: var(--cream); transition: border-color .25s; outline: none; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--gold); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-submit { width: 100%; background: var(--brown); color: var(--cream); border: none; border-radius: 12px; padding: 14px; font-weight: 700; font-size: 0.95rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background .25s; }
+    .form-submit:hover { background: var(--gold); }
 
-        .btn {
-            background-color: #d2691e;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
+    /* FOOTER */
+    footer { background: var(--dark-brown); color: var(--blush); padding: 48px 5% 28px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 32px; margin-bottom: 36px; }
+    .footer-brand .brand-name { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+    .footer-brand p { font-size: 0.9rem; opacity: 0.7; margin-top: 12px; max-width: 260px; line-height: 1.7; }
+    .footer-col h4 { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 9px; }
+    .footer-col ul li a { color: var(--blush); text-decoration: none; font-size: 0.9rem; opacity: 0.8; transition: opacity .2s; }
+    .footer-col ul li a:hover { opacity: 1; }
+    .footer-bottom { max-width: 1100px; margin: 0 auto; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; font-size: 0.83rem; opacity: 0.6; }
 
-        .btn:hover {
-            background-color: #8b4513;
-        }
+    /* TOAST */
+    #toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--dark-brown); color: var(--cream); padding: 14px 28px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; box-shadow: 0 8px 30px rgba(0,0,0,0.25); transition: transform .4s cubic-bezier(.4,0,.2,1); z-index: 9999; white-space: nowrap; }
+    #toast.show { transform: translateX(-50%) translateY(0); }
 
-        footer {
-            background-color: #8b4513;
-            color: white;
-            text-align: center;
-            padding: 15px;
-        }
-
-        iframe {
-            border: 0;
-            width: 100%;
-            height: 300px;
-            border-radius: 10px;
-        }
-    </style>
+    /* RESPONSIVE */
+    @media (max-width: 860px) {
+      .hero-inner, .about-inner, .contact-inner, .map-container { grid-template-columns: 1fr; }
+      .hero-image-grid { max-width: 400px; margin: 0 auto; }
+      .about-imgs { height: 360px; }
+    }
+    @media (max-width: 580px) {
+      nav { padding: 0 4%; }
+      .nav-logo-text { font-size: 1.2rem; }
+      .nav-links { gap: 1rem; }
+      section { padding: 72px 4%; }
+      #cart-panel { width: 100%; }
+    }
+  </style>
 </head>
-
 <body>
 
-<header>
-    <h1>Haus ofBakes</h1>
-    <p>Baked with Love, Served With Joy 🍰</p>
-</header>
-
+<!-- NAVBAR -->
 <nav>
-    <a href="#">Home</a>
-    <a href="#products">Products</a>
-    <a href="#about">About</a>
-    <a href="#contact">Contact</a>
+  <a href="#home" class="nav-logo">
+    <img src="Haus-of-Bakes.png" alt="Haus of Bakes Logo" id="logo-img"
+         onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';" />
+    <span id="logo-fallback" class="logo-fallback">🥐</span>
+    <span class="nav-logo-text">Haus <span>of Bakes</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#about">About Us</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li>
+      <a href="#" class="cart-btn" onclick="toggleCart(event)">
+        <i class="fa fa-shopping-bag"></i> Cart
+        <span id="cart-count">0</span>
+      </a>
+    </li>
+  </ul>
 </nav>
 
-<div class="hero">
-    Delicious Breads & Pastries
-</div>
-
-<section class="section" id="products">
-    <h2>Our Special Items</h2>
-    <div class="products">
-        
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587" alt="Chocolate Cake">
-            <h3>Chocolate Cake</h3>
-            <p>Rich and creamy chocolate delight.</p>
-            <button class="btn">Order Now</button>
-        </div>
-
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b" alt="Cupcakes">
-            <h3>Colorful Cupcakes</h3>
-            <p>Soft, sweet and beautifully decorated.</p>
-            <button class="btn">Order Now</button>
-        </div>
-
-        <div class="card">
-            <img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f" alt="Bread">
-            <h3>Fresh Sourdough</h3>
-            <p>Warm and freshly baked every morning.</p>
-            <button class="btn">Order Now</button>
-        </div>
-
+<!-- HERO -->
+<section id="home">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <span class="eyebrow">✦ Artisan Bakery · Butwal, Nepal</span>
+      <h1>
+        Baked with Love,
+        <em>Every Single Day</em>
+      </h1>
+      <p>Handcrafted pastries, cakes, and breads made from the finest ingredients. We bring warmth to every bite — from our haus to yours.</p>
+      <div class="hero-cta">
+        <a href="#products" class="btn-primary">Shop Now</a>
+        <a href="#about" class="btn-outline">Our Story</a>
+      </div>
     </div>
+     <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=900&auto=format&fit=crop&q=80" alt="Fresh baked goods"/>
+    <div class="hero-overlay"></div>
+    <div class="hero-badge">
+      <span class="hero-badge-label">Since</span>
+      <span class="hero-badge-num">2026</span>
+      <span class="hero-badge-label">Butwal</span>
+    </div>
+  </div>
 </section>
 
-<section class="section" id="about">
-    <h2>About Us</h2>
-    <p>Haus of Bakes has been serving fresh and delicious baked goods since 2026. 
-    We use high-quality ingredients to make every bite special.</p>
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-title">
+    <span class="eyebrow">✦ Fresh Daily</span>
+    <h2>Our Signature Bakes</h2>
+    <p>Every item is baked fresh each morning using traditional recipes and quality local ingredients.</p>
+  </div>
+  <div class="products-grid" id="product-grid"></div>
 </section>
 
-<section class="section" id="contact">
-    <h2>Contact Us</h2>
-    <p>Email: hausofbakes@email.com</p>
-    <p>Phone: +977-9877435620</p>
-    <button class="btn">Place an Order</button>
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-inner">
+    <div class="about-text">
+      <span class="eyebrow">✦ Our Story</span>
+      <h2>A Labor of Love Since 2026</h2>
+      <p>Haus of Bakes was born from a simple dream — to fill Butwal with the scent of freshly baked bread and the joy of handcrafted pastries. What started as a small home kitchen has grown into a beloved neighborhood bakery.</p>
+      <p>We source local eggs, dairy, and seasonal fruits, and bake everything from scratch each morning. No preservatives, no shortcuts — just honest, wholesome baking made with heart.</p>
+      <div class="about-features">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa fa-leaf"></i></div>
+          <div><h4>Natural Ingredients</h4><p>No additives or preservatives</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa fa-fire"></i></div>
+          <div><h4>Baked Fresh Daily</h4><p>Prepared every morning at 5AM</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa fa-heart"></i></div>
+          <div><h4>Made with Love</h4><p>Every batch is handcrafted</p></div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fa fa-truck"></i></div>
+          <div><h4>Local Delivery</h4><p>Delivering across Butwal</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section class="section" id="location">
-    <h2>Our City: Butwal, Nepal</h2>
-
-    <!-- Simple map showing Butwal, Nepal -->
-    <iframe 
-        src="https://maps.google.com/maps?q=27.7006,83.4484&z=13&output=embed"
-        allowfullscreen>
-    </iframe>
-    <p>Map coordinates: approximately 27.70°N, 83.45°E (Butwal, Nepal) :contentReference[oaicite:1]{index=1}</p>
+<!-- LOCATION / MAP -->
+<section id="location">
+  <div class="section-title">
+    <span class="eyebrow">✦ Find Us</span>
+    <h2>Come Visit Us</h2>
+    <p>We're in the heart of Butwal, Nepal — stop by for a warm pastry and a hot cup of tea.</p>
+  </div>
+  <div class="map-container">
+    <div class="location-details">
+      <h3>Where to Find Us</h3>
+      <div class="location-item">
+        <div class="location-icon"><i class="fa fa-map-marker-alt"></i></div>
+        <div>
+          <strong>Address</strong>
+          <span>Devinagar-11, Butwal<br> Nepal</span>
+        </div>
+      </div>
+      <div class="location-item">
+        <div class="location-icon"><i class="fa fa-clock"></i></div>
+        <div>
+          <strong>Opening Hours</strong>
+          <span>Sun–Fri: 6:00 AM – 8:00 PM<br>Saturday: 7:00 AM – 6:00 PM</span>
+        </div>
+      </div>
+      <div class="location-item">
+        <div class="location-icon"><i class="fa fa-phone"></i></div>
+        <div>
+          <strong>Phone</strong>
+          <span>+977-9817542617</span>
+        </div>
+      </div>
+      <div class="location-item">
+        <div class="location-icon"><i class="fa fa-envelope"></i></div>
+        <div>
+          <strong>Email</strong>
+          <span>hausofbakes0@gmail.com</span>
+        </div>
+      </div>
+    </div>
+    <div class="map-embed">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57018.08!2d83.4326!3d27.7006!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3996864339f1d68d%3A0x7e30e5c2e0302580!2sButwal%2C%20Rupandehi%20District%2C%20Nepal!5e0!3m2!1sen!2snp!4v1680000000000"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
 </section>
 
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-text">
+      <span class="eyebrow">✦ Get in Touch</span>
+      <h2>We'd Love to Hear From You</h2>
+      <p>Have a custom order? Planning a birthday or event? Reach out — we'd be delighted to create something special just for you.</p>
+
+      <div style="margin-bottom:28px;">
+        <div class="location-item">
+          <div class="location-icon"><i class="fa fa-phone"></i></div>
+          <div>
+            <strong>Call Us</strong>
+            <span>+977-9817542617</span>
+          </div>
+        </div>
+        <div class="location-item" style="margin-top:14px;">
+          <div class="location-icon"><i class="fa fa-envelope"></i></div>
+          <div>
+            <strong>Email Us</strong>
+            <span>hausofbakes0@gmail.com</span>
+          </div>
+        </div>
+      </div>
+
+      <p style="font-weight:700;color:var(--brown);margin-bottom:14px;font-size:.9rem;letter-spacing:.08em;text-transform:uppercase;">Follow &amp; Message Us</p>
+      <div class="social-links">
+        <a href="https://https://www.facebook.com/profile.php?id=61587791198482" target="_blank" class="social-link facebook">
+          <i class="fab fa-facebook-f"></i> Facebook
+        </a>
+        <a href="https://wa.me/9779817542617" target="_blank" class="social-link whatsapp">
+          <i class="fab fa-whatsapp"></i> WhatsApp
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      <h3>Send a Message</h3>
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" placeholder="e.g. Sadhana Shrestha" id="f-name"/>
+      </div>
+      <div class="form-group">
+        <label>Email Address</label>
+        <input type="email" placeholder="sadhana13@example.com" id="f-email"/>
+      </div>
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" placeholder="+977 98XXXXXXXX" id="f-phone"/>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea placeholder="Tell us about your order or inquiry…" id="f-msg"></textarea>
+      </div>
+      <button class="form-submit" onclick="handleFormSubmit(event)">Send Message</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
 <footer>
-    <p>© 2026 Haus of Bakes | All Rights Reserved</p>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="brand-name">Haus of Bakes</div>
+      <p>Baked with Love, Served with Joy</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Our Bakes</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Our Bakes</h4>
+      <ul>
+        <li><a href="#products">Sourdough Bread</a></li>
+        <li><a href="#products">Croissants</a></li>
+        <li><a href="#products">Cakes &amp; Brownies</a></li>
+        <li><a href="#products">Muffins &amp; Rolls</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="#">Devinagar-11, Butwal</a></li>
+        <li><a href="tel:+9779817542617"</a></li>
+        <li><a href="mailto:hello@hausofbakes.com.np">hello@hausofbakes.com.np</a></li>
+        <li><a href="https://https://www.facebook.com/profile.php?id=61587791198482" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a></li>
+        <li><a href="https://wa.me/9779817542617" target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Haus of Bakes. All rights reserved.</span>
+    <span>Made with ❤️ in Butwal, Nepal</span>
+  </div>
 </footer>
 
+<!-- CART PANEL -->
+<div id="cart-overlay" onclick="toggleCart(event)"></div>
+<div id="cart-panel">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="close-cart" onclick="toggleCart(event)"><i class="fa fa-times"></i></button>
+  </div>
+  <div id="cart-items">
+    <div class="cart-empty" id="cart-empty">
+      <i class="fa fa-shopping-bag"></i>
+      <p>Your cart is empty.<br/>Add some delicious bakes!</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none;">
+    <div class="cart-total">
+      <span>Total</span>
+      <span id="cart-total-price">Rs. 0</span>
+    </div>
+    <button class="checkout-btn" onclick="checkout()">
+      <i class="fab fa-whatsapp"></i> Order via WhatsApp
+    </button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+  const products = [
+    {id:1,name:"Sourdough Loaf",desc:"Long-fermented sourdough with a crispy crust and chewy crumb.",price:320,unit:"per loaf",tag:"Bestseller",img:"https://images.unsplash.com/photo-1517141544637-42b300cb4ee9?w=1974&auto=format&fit=crop&q=80"},
+  {id:2,name:"Vanilla Cake",desc:"Light vanilla sponge layered with silky cream and fresh flowers.",price:850,unit:"per kg",tag:"Popular",img:"https://images.unsplash.com/photo-1594054528735-d3782132b380?w=687&auto=format&fit=crop&q=80"},
+  {id:3,name:"Blueberry Muffin",desc:"Fluffy muffins bursting with fresh blueberries and golden streusel.",price:120,unit:"each",tag:"Fresh",img:"https://images.unsplash.com/photo-1607958996333-41aef7caefaa?w=600&auto=format&fit=crop&q=80"},
+  {id:4,name:"Bun",desc:"Soft, pillowy buns with sesame-seed crown — perfect for any burger.",price:60,unit:"each",tag:"Daily",img:"https://images.unsplash.com/photo-1592811773343-9abf0b1a6920?w=1170&auto=format&fit=crop&q=80"},
+  {id:5,name:"Croissant",desc:"Buttery laminated French-style croissants baked to golden perfection.",price:180,unit:"each",tag:"Morning",img:"https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&auto=format&fit=crop&q=80"},
+  {id:6,name:"Brownie",desc:"Fudgy dark-chocolate brownies with a crinkled top and molten centre.",price:150,unit:"each",tag:"Indulgent",img:"https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&auto=format&fit=crop&q=80"},
+  {id:7,name:"Chocolate Cake",desc:"Rich triple-chocolate layered cake draped in glossy ganache.",price:950,unit:"per kg",tag:"Signature",img:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&auto=format&fit=crop&q=80"},
+  {id:8,name:"Cinnamon Roll",desc:"Pillowy rolls swirled with cinnamon sugar and cream cheese glaze.",price:200,unit:"each",tag:"Favourite",img:"https://images.unsplash.com/photo-1653592656327-bed286768abc?w=1170&auto=format&fit=crop&q=80"}
+];
+
+  const qtys = {};
+  const cart = {};
+
+  function renderProducts() {
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = products.map(p => {
+      qtys[p.id] = 1;
+      return `<div class="product-card">
+        <img class="product-img" src="${p.img}" alt="${p.name}" loading="lazy"/>
+        <div class="product-info">
+          <div class="product-tag">${p.tag}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <div class="product-price">Rs. ${p.price.toLocaleString()} <span class="product-unit">${p.unit}</span></div>
+            <div class="qty-row">
+              <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+              <span class="qty-display" id="qty-${p.id}">1</span>
+              <button class="qty-btn" onclick="changeQty(${p.id},1)">+</button>
+            </div>
+          </div>
+          <button class="add-cart-btn" onclick="addToCart(${p.id})">
+            <i class="fa fa-plus"></i> Add to Cart
+          </button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function changeQty(id, d) {
+    qtys[id] = Math.max(1, (qtys[id]||1) + d);
+    document.getElementById('qty-'+id).textContent = qtys[id];
+  }
+
+  function addToCart(id) {
+    const p = products.find(x => x.id === id);
+    const q = qtys[id] || 1;
+    cart[id] ? (cart[id].qty += q) : (cart[id] = {...p, qty: q});
+    renderCart();
+    showToast(p.name + ' added to cart 🎉');
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    renderCart();
+  }
+
+  function renderCart() {
+    const items = Object.values(cart);
+    const container = document.getElementById('cart-items');
+    const footer = document.getElementById('cart-footer');
+    const countEl = document.getElementById('cart-count');
+    const totalEl = document.getElementById('cart-total-price');
+    countEl.textContent = items.reduce((s,i) => s+i.qty, 0);
+    if (!items.length) {
+      footer.style.display = 'none';
+      container.innerHTML = '<div class="cart-empty"><i class="fa fa-shopping-bag"></i><p>Your cart is empty.<br/>Add some delicious bakes!</p></div>';
+      return;
+    }
+    footer.style.display = 'block';
+    totalEl.textContent = 'Rs. ' + items.reduce((s,i)=>s+i.price*i.qty,0).toLocaleString();
+    container.innerHTML = items.map(i => `
+      <div class="cart-item">
+        <img src="${i.img}" alt="${i.name}"/>
+        <div class="cart-item-details">
+          <div class="cart-item-name">${i.name} × ${i.qty}</div>
+          <div class="cart-item-price">Rs. ${(i.price*i.qty).toLocaleString()}</div>
+        </div>
+        <button class="cart-item-remove" onclick="removeFromCart(${i.id})"><i class="fa fa-trash"></i></button>
+      </div>`).join('');
+  }
+
+  function toggleCart(e) {
+    e.preventDefault();
+    document.getElementById('cart-panel').classList.toggle('open');
+    document.getElementById('cart-overlay').classList.toggle('open');
+  }
+
+  function checkout() {
+    const items = Object.values(cart);
+    if (!items.length) return;
+    const msg = "Hello Haus of Bakes! 🥐 I'd like to order:\n"
+      + items.map(i=>`• ${i.name} × ${i.qty} = Rs. ${(i.price*i.qty).toLocaleString()}`).join('\n')
+      + `\n\nTotal: Rs. ${items.reduce((s,i)=>s+i.price*i.qty,0).toLocaleString()}`;
+    window.open('https://wa.me/9779817542617?text='+encodeURIComponent(msg), '_blank');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2800);
+  }
+
+  function handleFormSubmit(e) {
+    e.preventDefault();
+    showToast("Message sent! We'll be in touch soon 💌");
+    ['f-name','f-email','f-phone','f-msg'].forEach(id => document.getElementById(id).value='');
+  }
+
+  renderProducts();
+</script>
 </body>
 </html>
